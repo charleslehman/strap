@@ -26,11 +26,27 @@
       });
     }
 
-    function plotImageOnMap(lat, lng, imageUrl) {
-      new google.maps.Marker({
+    function plotImageOnMap(lat, lng, imageUrl, file) {
+      const marker = new google.maps.Marker({
         position: { lat, lng },
         map,
-        icon: imageUrl,
+        icon: 'icon.png',
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div>
+            <img src="${imageUrl}" style="max-width: 200px; max-height: 200px;" />
+            <p>File Name: ${file.name}</p>
+            <p>File Size: ${formatFileSize(file.size)}</p>
+            <p>Latitude: ${lat}</p>
+            <p>Longitude: ${lng}</p>
+          </div>
+        `,
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(map, marker);
       });
     }
 
@@ -51,7 +67,7 @@
             const latDec = convertDMSToDD(lat, latRef);
             const lngDec = convertDMSToDD(lng, lngRef);
 
-            plotImageOnMap(latDec, lngDec, imageUrl);
+            plotImageOnMap(latDec, lngDec, imageUrl, file);
             map.setCenter({ lat: latDec, lng: lngDec });
             map.setZoom(12);
           } else {
@@ -67,6 +83,19 @@
       const [degrees, minutes, seconds] = dms;
       const dd = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600;
       return ref === "S" || ref === "W" ? -dd : dd;
+    }
+
+    function formatFileSize(bytes) {
+      const units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+      let size = bytes;
+      let unitIndex = 0;
+
+      while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+      }
+
+      return `${size.toFixed(2)} ${units[unitIndex]}`;
     }
 
     document.getElementById("fileInput").addEventListener("change", handleFileUpload);
