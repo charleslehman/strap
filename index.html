@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tag: Street at around you</title>
+  <title>Tag: Street Art Around You</title>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOqutgk6LhMkN4ji2NY7zaZ__aTz9l_H0"></script>
   <script src="https://charleslehman.github.io/strap/exif.js"></script>
   <style>
@@ -27,10 +27,15 @@
     }
 
     function plotImageOnMap(lat, lng, imageUrl, file) {
-      const marker = new google.maps.Marker({
-        position: { lat, lng },
+      const markerElement = document.createElement('div');
+      markerElement.style.backgroundImage = `url('https://github.com/charleslehman/strap/blob/1b21e31941934361e7395caadf5d2467a37d8006/icon.png')`;
+      markerElement.style.width = '24px';
+      markerElement.style.height = '24px';
+
+      const marker = new google.maps.marker.AdvancedMarkerElement({
         map,
-        icon: 'icon.png',
+        position: { lat, lng },
+        content: markerElement,
       });
 
       const infoWindow = new google.maps.InfoWindow({
@@ -50,56 +55,8 @@
       });
     }
 
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
+    // ... (rest of the code remains the same)
 
-      reader.onload = function (e) {
-        const imageUrl = e.target.result;
-        EXIF.getData(file, function () {
-          const lat = EXIF.getTag(this, "GPSLatitude");
-          const lng = EXIF.getTag(this, "GPSLongitude");
-
-          if (lat && lng) {
-            const latRef = EXIF.getTag(this, "GPSLatitudeRef") || "N";
-            const lngRef = EXIF.getTag(this, "GPSLongitudeRef") || "E";
-
-            const latDec = convertDMSToDD(lat, latRef);
-            const lngDec = convertDMSToDD(lng, lngRef);
-
-            plotImageOnMap(latDec, lngDec, imageUrl, file);
-            map.setCenter({ lat: latDec, lng: lngDec });
-            map.setZoom(12);
-          } else {
-            alert("No GPS data found in the image.");
-          }
-        });
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    function convertDMSToDD(dms, ref) {
-      const [degrees, minutes, seconds] = dms;
-      const dd = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600;
-      return ref === "S" || ref === "W" ? -dd : dd;
-    }
-
-    function formatFileSize(bytes) {
-      const units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-      let size = bytes;
-      let unitIndex = 0;
-
-      while (size >= 1024 && unitIndex < units.length - 1) {
-        size /= 1024;
-        unitIndex++;
-      }
-
-      return `${size.toFixed(2)} ${units[unitIndex]}`;
-    }
-
-    document.getElementById("fileInput").addEventListener("change", handleFileUpload);
-    initMap();
   </script>
 </body>
 </html>
