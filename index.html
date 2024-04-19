@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>Tag: Street Art Around You</title>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=default" async defer></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOqutgk6LhMkN4ji2NY7zaZ__aTz9l_H0&callback=initMap&libraries=marker&v=beta" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/dist/exif-js.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOqutgk6LhMkN4ji2NY7zaZ__aTz9l_H0&callback=initMap&libraries=marker&v=beta" defer></script>
+  <script src="https://charleslehman.github.io/strap/exif.js"></script>
   <style>
     #map {
       height: 400px;
@@ -33,10 +33,10 @@
       markerElement.style.width = '24px';
       markerElement.style.height = '24px';
 
-      const marker = new google.maps.Marker({
+      const marker = new google.maps.marker.AdvancedMarkerElement({
         map,
         position: { lat, lng },
-        icon: markerElement,
+        content: markerElement,
       });
 
       const infoWindow = new google.maps.InfoWindow({
@@ -73,8 +73,8 @@
           console.log("Longitude:", lng);
 
           if (lat && lng) {
-            const latRef = EXIF.getTag(this, "GPSLatitudeRef") || "
-const lngRef = EXIF.getTag(this, "GPSLongitudeRef") || "E";
+            const latRef = EXIF.getTag(this, "GPSLatitudeRef") || "N";
+            const lngRef = EXIF.getTag(this, "GPSLongitudeRef") || "E";
 
             const latDec = convertDMSToDD(lat, latRef);
             const lngDec = convertDMSToDD(lng, lngRef);
