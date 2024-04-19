@@ -29,16 +29,25 @@
     }
 
     function plotImageOnMap(lat, lng, imageUrl, file) {
+      console.log("plotImageOnMap called with lat:", lat, "lng:", lng);
+
       const markerElement = document.createElement('div');
-      markerElement.style.backgroundImage = `url('https://github.com/charleslehman/strap/blob/1b21e31941934361e7395caadf5d2467a37d8006/icon.png')`;
+      markerElement.style.backgroundColor = 'red';
       markerElement.style.width = '24px';
       markerElement.style.height = '24px';
+      markerElement.style.borderRadius = '50%';
 
       const marker = new google.maps.marker.AdvancedMarkerElement({
         map,
         position: { lat, lng },
         content: markerElement,
       });
+
+      console.log("Marker created:", marker);
+
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend({ lat, lng });
+      map.fitBounds(bounds);
 
       const infoWindow = new google.maps.InfoWindow({
         content: `
@@ -84,8 +93,6 @@
             console.log("Decimal Longitude:", lngDec);
 
             plotImageOnMap(latDec, lngDec, imageUrl, file);
-            map.setCenter({ lat: latDec, lng: lngDec });
-            map.setZoom(12);
           } else {
             alert("No GPS data found in the image.");
           }
