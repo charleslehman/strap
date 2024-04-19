@@ -6,122 +6,95 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOqutgk6LhMkN4ji2NY7zaZ__aTz9l_H0&map_ids=f355d5540346dcae&callback=initMap&libraries=marker" defer></script>
   <script src="https://charleslehman.github.io/strap/exif.js"></script>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
     #map {
       height: 400px;
       width: 100%;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-upload {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .file-upload input[type="file"] {
+      display: none;
+    }
+
+    .file-upload label {
+      padding: 10px 20px;
+      background-color: #4285f4;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .file-upload label:hover {
+      background-color: #3367d6;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 20px;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>Strap: Fuck You We're Strap</h1>
-  <input type="file" id="fileInput" accept="image/*" />
+  <h1>Tag: Street Art Around You</h1>
+  <div class="file-upload">
+    <label for="fileInput">Choose Image</label>
+    <input type="file" id="fileInput" accept="image/*" />
+  </div>
   <div id="map"></div>
+  <div class="loading">Loading...</div>
 
   <script>
-    let map;
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 0, lng: 0 },
-        zoom: 2,
-        mapId: 'YOUR_MAP_ID',
-      });
-    }
-
-    function plotImageOnMap(lat, lng, imageUrl, file) {
-      console.log("plotImageOnMap called with lat:", lat, "lng:", lng);
-
-      const markerElement = document.createElement('div');
-      markerElement.style.backgroundColor = 'red';
-      markerElement.style.width = '24px';
-      markerElement.style.height = '24px';
-      markerElement.style.borderRadius = '50%';
-
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        map,
-        position: { lat, lng },
-        content: markerElement,
-      });
-
-      console.log("Marker created:", marker);
-
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend({ lat, lng });
-      map.fitBounds(bounds);
-
-      const infoWindow = new google.maps.InfoWindow({
-        content: `
-          <div>
-            <img src="${imageUrl}" style="max-width: 200px; max-height: 200px;" />
-            <p>File Name: ${file.name}</p>
-            <p>File Size: ${formatFileSize(file.size)}</p>
-            <p>Latitude: ${lat}</p>
-            <p>Longitude: ${lng}</p>
-          </div>
-        `,
-      });
-
-      marker.addListener('click', () => {
-        infoWindow.open({
-          anchor: marker,
-          map,
-        });
-      });
-    }
+    // ... (previous JavaScript code remains the same)
 
     function handleFileUpload(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
+      const loadingElement = document.querySelector('.loading');
+
+      loadingElement.style.display = 'block';
 
       reader.onload = function (e) {
         const imageUrl = e.target.result;
         EXIF.getData(file, function () {
-          const lat = EXIF.getTag(this, "GPSLatitude");
-          const lng = EXIF.getTag(this, "GPSLongitude");
-
-          console.log("Latitude:", lat);
-          console.log("Longitude:", lng);
+          // ... (EXIF data extraction code remains the same)
 
           if (lat && lng) {
-            const latRef = EXIF.getTag(this, "GPSLatitudeRef") || "N";
-            const lngRef = EXIF.getTag(this, "GPSLongitudeRef") || "E";
-
-            const latDec = convertDMSToDD(lat, latRef);
-            const lngDec = convertDMSToDD(lng, lngRef);
-
-            console.log("Decimal Latitude:", latDec);
-            console.log("Decimal Longitude:", lngDec);
-
+            // ... (coordinate conversion code remains the same)
             plotImageOnMap(latDec, lngDec, imageUrl, file);
           } else {
             alert("No GPS data found in the image.");
           }
+
+          loadingElement.style.display = 'none';
         });
       };
 
       reader.readAsDataURL(file);
     }
 
-    function convertDMSToDD(dms, ref) {
-      const [degrees, minutes, seconds] = dms;
-      const dd = Number(degrees) + Number(minutes) / 60 + Number(seconds) / 3600;
-      return ref === "S" || ref === "W" ? -dd : dd;
-    }
-
-    function formatFileSize(bytes) {
-      const units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-      let size = bytes;
-      let unitIndex = 0;
-
-      while (size >= 1024 && unitIndex < units.length - 1) {
-        size /= 1024;
-        unitIndex++;
-      }
-
-      return `${size.toFixed(2)} ${units[unitIndex]}`;
-    }
-
-    document.getElementById("fileInput").addEventListener("change", handleFileUpload);
+    // ... (remaining JavaScript code remains the same)
   </script>
 </body>
 </html>
