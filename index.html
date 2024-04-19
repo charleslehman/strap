@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>Tag: Street Art Around You</title>
-  <script src="(link unavailable)"></script>
-  <script src="(link unavailable)" async defer></script>
-  <script src="(link unavailable)"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOqutgk6LhMkN4ji2NY7zaZ__aTz9l_H0&callback=initMap&libraries=marker&v=beta" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/dist/exif-js.min.js"></script>
   <style>
     #map {
       height: 400px;
@@ -29,7 +29,7 @@
 
     function plotImageOnMap(lat, lng, imageUrl, file) {
       const markerElement = document.createElement('div');
-      markerElement.style.backgroundImage = `url('(link unavailable)')`;
+      markerElement.style.backgroundImage = `url('https://github.com/charleslehman/strap/blob/1b21e31941934361e7395caadf5d2467a37d8006/icon.png')`;
       markerElement.style.width = '24px';
       markerElement.style.height = '24px';
 
@@ -73,8 +73,8 @@
           console.log("Longitude:", lng);
 
           if (lat && lng) {
-            const latRef = EXIF.getTag(this, "GPSLatitudeRef") || "N";
-            const lngRef = EXIF.getTag(this, "GPSLongitudeRef") || "E";
+            const latRef = EXIF.getTag(this, "GPSLatitudeRef") || "
+const lngRef = EXIF.getTag(this, "GPSLongitudeRef") || "E";
 
             const latDec = convertDMSToDD(lat, latRef);
             const lngDec = convertDMSToDD(lng, lngRef);
